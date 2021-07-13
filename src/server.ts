@@ -1,6 +1,9 @@
 import { Container, Contracts, Types } from "@arkecosystem/core-kernel";
 import { badData } from "@hapi/boom";
 import { Server as HapiServer, ServerInjectOptions, ServerInjectResponse } from "@hapi/hapi";
+import * as vision from "@hapi/vision";
+import handlebars from "handlebars";
+import { Handler } from "./handler";
 
 /**
  * @export
@@ -47,6 +50,13 @@ export class Server {
 
                 return h.continue;
             },
+        });
+
+        this.server.register(vision);
+        this.server.views({
+            engines: { html: handlebars },
+            relativeTo: __dirname,
+            path: `templates/`,
         });
 
         await this.registerRoutes();
@@ -133,12 +143,12 @@ export class Server {
      * @memberof Server
      */
     private registerRoutes(): void {
+        const handler = this.app.resolve<Handler>(Handler);
+
         this.server.route({
             method: "GET",
             path: "/",
-            handler() {
-                return { data: "Hello World!" };
-            },
+            handler: handler.handler,
         });
     }
 }
