@@ -1,10 +1,10 @@
 {
     "private": true,
-    "name": "@vendorname/your-dapp-name",
-    "description": "Your dApp description",
-    "version": "0.0.1",
+    "name": "@arkecosystem/core-vote-report",
+    "description": "Vote Report for ARK Core",
+    "version": "3.0.0",
     "contributors": [
-        "FirstName, LastName <kristjan@ark.io>"
+        "Sebastijan Kužner <sebastijan@ark.io>"
     ],
     "license": "MIT",
     "main": "dist/index.js",
@@ -29,7 +29,7 @@
         "test:coverage": "cross-env CORE_ENV=test jest --coverage --coveragePathIgnorePatterns='/(defaults.ts|index.ts)$' --runInBand --forceExit"
     },
     "dependencies": {
-        "@arkecosystem/core-kernel": "3.0.0-next.28"
+        "@arkecosystem/core-kernel": "^3.0.0-next.28"
     },
     "devDependencies": {
         "@sindresorhus/tsconfig": "0.7.0",
