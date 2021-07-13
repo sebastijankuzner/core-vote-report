@@ -29,7 +29,8 @@
         "test:coverage": "cross-env CORE_ENV=test jest --coverage --coveragePathIgnorePatterns='/(defaults.ts|index.ts)$' --runInBand --forceExit"
     },
     "dependencies": {
-        "@arkecosystem/core-kernel": "^3.0.0-next.28"
+        "@arkecosystem/core-kernel": "^3.0.0-next.28",
+        "joi": "^17.3.0"
     },
     "devDependencies": {
         "@sindresorhus/tsconfig": "0.7.0",

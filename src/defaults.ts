@@ -1,3 +1,9 @@
 export const defaults = {
-    enabled: true
+    enabled: !process.env.CORE_VOTE_REPORT_DISABLED,
+    server: {
+        http: {
+            host: process.env.CORE_VOTE_REPORT_HOST || "0.0.0.0",
+            port: process.env.CORE_VOTE_REPORT_PORT || 4006
+        }
+    }
 };
