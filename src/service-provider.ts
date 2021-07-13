@@ -1,12 +1,22 @@
-import { Providers } from "@arkecosystem/core-kernel";
+import { Providers, Types } from "@arkecosystem/core-kernel";
 import Joi from "joi";
+import { Identifiers } from "./identifiers";
+import { Server } from "./server";
 
 export class ServiceProvider extends Providers.ServiceProvider {
-    public async register(): Promise<void> {}
+    public async register(): Promise<void> {
+        this.app.bind(Identifiers.Server).to(Server).inSingletonScope();
 
-    public async boot(): Promise<void> {}
+        await this.app.get<Server>(Identifiers.Server).register(this.config().get<Types.JsonObject>("server")!);
+    }
 
-    public async dispose(): Promise<void> {}
+    public async boot(): Promise<void> {
+        await this.app.get<Server>(Identifiers.Server).boot();
+    }
+
+    public async dispose(): Promise<void> {
+        await this.app.get<Server>(Identifiers.Server).dispose();
+    }
 
     public configSchema(): object {
         return Joi.object({
