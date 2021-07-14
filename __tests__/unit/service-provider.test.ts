@@ -1,7 +1,8 @@
 import "jest-extended";
 
-import { Application, Container } from "@arkecosystem/core-kernel";
+import { Application, Container, Providers } from "@arkecosystem/core-kernel";
 import { ServiceProvider } from "../../src";
+import { defaults } from "../../src/defaults";
 import { AnySchema } from "joi";
 
 let app: Application;
@@ -13,13 +14,25 @@ const mockLogger = {
 beforeEach(() => {
     app = new Application(new Container.Container());
 
+    app.bind(Container.Identifiers.PluginConfiguration).to(Providers.PluginConfiguration).inSingletonScope();
+    app.bind(Container.Identifiers.BlockchainService).toConstantValue({});
+    app.bind(Container.Identifiers.WalletRepository).toConstantValue({});
     app.bind(Container.Identifiers.LogService).toConstantValue(mockLogger);
 });
 
 describe("ServiceProvider", () => {
-    it("shouldRegister", async () => {
+    it("should register, boot and dispose", async () => {
         const serviceProvider = app.resolve<ServiceProvider>(ServiceProvider);
+
+        const pluginConfiguration = app.get<Providers.PluginConfiguration>(Container.Identifiers.PluginConfiguration);
+        const instance: Providers.PluginConfiguration = pluginConfiguration.from("@arkecosystem/core-vote-report", defaults);
+
+        serviceProvider.setConfig(instance);
+
         await expect(serviceProvider.register()).toResolve();
+        await expect(serviceProvider.boot()).toResolve();
+
+        await expect(serviceProvider.dispose()).toResolve();
     });
 
     describe("configSchema", () => {
