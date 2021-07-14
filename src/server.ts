@@ -148,7 +148,7 @@ export class Server {
         this.server.route({
             method: "GET",
             path: "/",
-            handler: handler.handler,
+            handler: handler.handler.bind(handler),
         });
     }
 }
