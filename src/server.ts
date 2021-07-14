@@ -59,7 +59,7 @@ export class Server {
             path: `templates/`,
         });
 
-        await this.registerRoutes();
+        this.registerRoutes();
     }
 
     /**
