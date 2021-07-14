@@ -40,6 +40,7 @@ describe("ServiceProvider", () => {
             expect(result.value.enabled).toBeTrue();
             expect(result.value.server.http.host).toEqual("0.0.0.0");
             expect(result.value.server.http.port).toEqual(4006);
+            expect(result.value.delegateRows).toEqual(80);
         });
 
         describe("process.env.CORE_VOTE_REPORT_DISABLED", () => {
@@ -87,6 +88,19 @@ describe("ServiceProvider", () => {
 
                 expect(result.error).toBeUndefined();
                 expect(result.value.server.http.port).toEqual(4000);
+            });
+        });
+
+        describe("process.env.CORE_VOTE_REPORT_DELEGATE_ROWS", () => {
+            it("should parse process.env.CORE_VOTE_REPORT_DELEGATE_ROWS", async () => {
+                process.env.CORE_VOTE_REPORT_DELEGATE_ROWS = "500";
+
+                const result = (serviceProvider.configSchema() as AnySchema).validate(
+                    (await import("../../src/defaults")).defaults,
+                );
+
+                expect(result.error).toBeUndefined();
+                expect(result.value.delegateRows).toEqual(500);
             });
         });
 
@@ -171,6 +185,28 @@ describe("ServiceProvider", () => {
                 result = (serviceProvider.configSchema() as AnySchema).validate(defaults);
 
                 expect(result.error!.message).toEqual('"server.http.port" is required');
+            });
+
+            it("delegateRows is required && is integer && is >= 0", async () => {
+                defaults.delegateRows = false;
+                let result = (serviceProvider.configSchema() as AnySchema).validate(defaults);
+
+                expect(result.error!.message).toEqual('"delegateRows" must be a number');
+
+                defaults.delegateRows = 1.12;
+                result = (serviceProvider.configSchema() as AnySchema).validate(defaults);
+
+                expect(result.error!.message).toEqual('"delegateRows" must be an integer');
+
+                defaults.delegateRows = -1;
+                result = (serviceProvider.configSchema() as AnySchema).validate(defaults);
+
+                expect(result.error!.message).toEqual('"delegateRows" must be greater than or equal to 0');
+
+                delete defaults.delegateRows;
+                result = (serviceProvider.configSchema() as AnySchema).validate(defaults);
+
+                expect(result.error!.message).toEqual('"delegateRows" is required');
             });
         });
     });

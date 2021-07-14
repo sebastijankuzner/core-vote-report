@@ -1,4 +1,4 @@
-import { Container, Contracts, Utils } from "@arkecosystem/core-kernel";
+import { Container, Contracts, Utils, Providers } from "@arkecosystem/core-kernel";
 import { Interfaces, Managers } from "@arkecosystem/crypto";
 
 @Container.injectable()
@@ -9,6 +9,10 @@ export class Handler {
     @Container.inject(Container.Identifiers.WalletRepository)
     @Container.tagged("state", "blockchain")
     private readonly walletRepository!: Contracts.State.WalletRepository;
+
+    @Container.inject(Container.Identifiers.PluginConfiguration)
+    @Container.tagged("plugin", "@arkecosystem/core-vote-report")
+    private readonly configuration!: Providers.PluginConfiguration;
 
     public async handler(request, h) {
         const lastBlock: Interfaces.IBlock = this.blockchain.getLastBlock();
@@ -22,7 +26,7 @@ export class Handler {
 
 
         const activeDelegates = delegates.slice(0, maxDelegates);
-        const standbyDelegates = delegates.slice(maxDelegates, 100); // TODO: take from config
+        const standbyDelegates = delegates.slice(maxDelegates, this.configuration.getRequired("delegateRows"));
 
         const voters = this.walletRepository
             .allByPublicKey()

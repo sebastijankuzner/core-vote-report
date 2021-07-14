@@ -27,6 +27,7 @@ export class ServiceProvider extends Providers.ServiceProvider {
                     port: Joi.number().integer().min(1).max(65535).required(),
                 }).required(),
             }).required(),
+            delegateRows: Joi.number().integer().min(0).required(),
         });
     }
 }
