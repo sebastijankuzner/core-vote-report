@@ -21,7 +21,14 @@ export class Handler {
         const supply: Utils.BigNumber = Utils.BigNumber.make(Utils.supplyCalculator.calculate(lastBlock.data.height));
 
         const delegates = [...this.walletRepository.allByUsername()].sort((a, b) => {
-            return a.getAttribute<number>("delegate.rank", 0) - b.getAttribute<number>("delegate.rank", 0);
+            if (a.hasAttribute("delegate.rank") || b.hasAttribute("delegate.rank")) {
+                if (a.hasAttribute("delegate.rank") && b.hasAttribute("delegate.rank")) {
+                    return a.getAttribute<number>("delegate.rank") - b.getAttribute<number>("delegate.rank");
+                }
+
+                return a.hasAttribute("delegate.rank") ? -1 : 1;
+            }
+            return a.getAttribute<number>("delegate.voteBalance") - b.getAttribute<number>("delegate.voteBalance");
         });
 
 
